@@ -1,0 +1,18 @@
+{
+  "name": "net-pet-ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "set BROWSER=none&& wrangler dev --port 8788",
+    "dev:safe": "set BROWSER=none&& wrangler dev --port 8788",
+    "deploy": "wrangler deploy",
+    "deploy:safe": "node -e \"if(!process.env.CLOUDFLARE_API_TOKEN){console.error('Missing CLOUDFLARE_API_TOKEN');process.exit(1)}\" && wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

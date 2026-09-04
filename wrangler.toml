@@ -1,0 +1,56 @@
+name = "net-pet-ai"
+main = "deploy/net-pet-ai-fixed.router.js"
+compatibility_date = "2026-03-16"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+serve_directly = true
+
+[[durable_objects.bindings]]
+name = "COMMANDS"
+class_name = "CommandDO"
+
+[[durable_objects.bindings]]
+name = "LEDGER"
+class_name = "LedgerDO"
+
+[[durable_objects.bindings]]
+name = "MEMORY"
+class_name = "MemoryDO"
+
+[[durable_objects.bindings]]
+name = "PETS"
+class_name = "PetDO"
+
+[[migrations]]
+tag = "v7-drop-session-profile"
+
+[[kv_namespaces]]
+binding = "NET_PET_KV"
+id = "0583d1a59bb24e598c4645396647eb94"
+
+[[kv_namespaces]]
+binding = "RATELIMIT"
+id = "b27d144f71c44b00a4c87360841e525f"
+
+[[kv_namespaces]]
+binding = "STUDENT_MEMORY"
+id = "807ea30d96844c0dbf561d0ae3a3c1f3"
+
+[[d1_databases]]
+binding = "SOUL_DB"
+database_name = "soul-archive"
+database_id = "c69a11bc-064b-478f-9b1f-e9b8e2431fb8"
+
+[[queues.producers]]
+binding = "net_pet_notifications"
+queue = "net-pet-notifications"
+
+[vars]
+APP_NAME = "Natural English Training"
+APP_COACH_NAME = "Obi"
+IMAGE_GEN_URL = ""
+RESEND_API_KEY = ""
+SOUL_LOGGER_URL = "https://soul-logger.mrmichaelhobbs123.workers.dev"

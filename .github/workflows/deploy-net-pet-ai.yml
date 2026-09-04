@@ -1,0 +1,50 @@
+name: Deploy NET-PET-AI Worker (public mirror CI)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'deploy/**'
+      - 'wrangler.toml'
+      - 'package.json'
+      - '.github/workflows/deploy-net-pet-ai.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Workers (free tier)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Verify Cloudflare token (predeploy guardrail)
+        run: node scripts/verify-cloudflare-token.mjs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy NET-PET-AI Worker
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke check (guardrail - 200 + ok:true required)
+        run: |
+          sleep 10
+          echo "--- /api/health ---"
+          curl -fsS https://net-pet-ai.mrmichaelhobbs123.workers.dev/api/health
+          echo ""
+          curl -fsS https://net-pet-ai.mrmichaelhobbs123.workers.dev/api/health | grep -q '"ok":true' || { echo "HEALTH CHECK FAILED: /api/health did not return ok:true"; exit 1; }
